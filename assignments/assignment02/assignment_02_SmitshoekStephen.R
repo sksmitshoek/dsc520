@@ -81,7 +81,6 @@ table_names <- dbListTables(db)
 ## Use `table_names`, `dbReadTable`, and `conn = db` as arguments
 ## Print out the tables
 tables <- lapply(table_names, dbReadTable, conn=db)
-?lapply
 tables
 
 ## Use the `dbDisconnect` function to disconnect from the database
