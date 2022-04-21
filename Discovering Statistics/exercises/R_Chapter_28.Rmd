@@ -1,0 +1,109 @@
+---
+title: "Play Time"
+author: "Jared P. Lander"
+date: "18/04/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Title - Also a Heading 1
+
+_this will be italicized_
+
+__this will be bolded__
+
+## Heading 2
+
+Build an unordered list
+
+- Item 1
+- Item 2
+- Item 3
+
+
+Build an ordered list mixed with an unordered list
+
+1. An item
+1. Another item
+    - Sublist item
+    - Another sublist item
+    - one more item
+1. Another ordered item
+
+The following is a link
+[My Website](http://www.jaradlander.com)
+
+## Another Heading 2
+This inserts an image
+
+#### Heading 4
+A regular equation
+$$
+  \boldsymbol{\hat{\beta}} = (X^TX)^{-1}X^TY
+$$
+
+An inline equation: $\bar{x}=\frac{1}{n}\nsum_(i=1)^n$ with no spaces
+
+### Heading 3
+> This is the start of a block quote
+>
+> This is the following line in the block quote
+
+```{r code-and-plot}
+
+#this is a comment
+1+1
+plot(1:10)
+2+2
+```
+
+```{r kable}
+knitr::kable(head(iris), caption='Tabular data printed using kable.')
+```
+
+```{r DT}
+library(DT)
+data(diamonds, package='ggplot2')
+datatable(head(diamonds, 100), 
+          rownames=FALSE, extensions='Scroller', filter='top',
+          options = list(
+            dom = "tiS", scrollX=TRUE,
+            scrollY = 400,
+            scrollCollapse = TRUE
+          )) %>%
+  formatCurrency('price', digits=0) %>%
+  formatStyle(columns='cut', valueColumns='cut', target='row',
+               backgroundColor=styleEqual(levels=c('Good', 'Ideal'),
+                                          values=c('red', 'green')
+                                          )
+               )
+```
+
+```{r pizza-map}
+library(jsonlite)
+pizza <- fromJSON('http://www.jaredlander.com/data/PizzaFavorites.json')
+pizza
+```
+
+```{r interactive-graph}
+library(WDI)
+library(dplyr)
+gdp <- WDI(country=c("US", "CA", "SG", "IL"),
+                    indicator=c("NY.GDP.PCAP.CD"),
+                    start=1970, end=2011)
+names(gdp) <- c("iso2c", "Country", "PerCapGDP", "Year")
+head(gdp)
+gdpWide <- gdp %>%
+  dplyr::select(Country, Year, PerCapGDP) %>%
+  tidyr::spread(key=Country, value=PerCapGDP)
+head(gdpWide)
+library(dygraphs)
+dygraph(gdpWide, main='Yearly Per Capita GDP',
+        xlab='Year', ylab='Per Capita GDP') %>%
+  dyOptions(drawPoints = TRUE, pointSize = 1) %>%
+  dyLegend(width=400) %>%
+  dyRangeSelector(dateWindow = c("1990", "2000"))
+```
