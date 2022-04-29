@@ -1,0 +1,94 @@
+---
+title: "week_07_student_survey_SmitshoekStephen"
+author: "Stephen Smitshoek"
+date: "27/04/2022"
+output: pdf_document
+---
+
+```{r include=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+student.survey <- read.csv("data\\student-survey.csv")
+```
+
+# i.
+```{r echo=FALSE}
+cov(student.survey)
+```
+
+# ii.
+```{r echo=FALSE}
+student.survey
+```
+There are four variables being used,
+
+* TimeReading is measured in hours  
+* TimeTV is measured in minutes  
+* Happiness appears to be measured in percentage  
+* Gender is measured as a binary integer, either 1 or 0
+
+Changing the units of the variables used will change the covariance numbers but it will not nessessarily change the information that is revealed. Covariance tells you the two variables are positively, negativity, or not correlated but the strength of the relationship can only be compared where the units are equal. For example if a third variable was added, TimeSleeping, and it along with TimeTV and TimeReading were all in minutes, you could see the relative strength of the correlation between the three variables but you could not see a relative strength between the relation of TimeSleeping ~ TimeTV and TimeSleeping ~ Gender.
+
+It is best practice to have the two variables share units where possible.  For example TimeReading is in hours and TimeTV is in minutes.  Because both units are a measure of time it would be best to have them both in the same units.
+
+
+# iii.
+```{r echo=FALSE}
+with(student.survey, cor.test(TimeReading, Happiness, method="pearson"))
+```
+A Pearson correlation test was performed assuming that both TimeReading and Happiness are normally distributed and neither are a rank.  I predicted that TimeReading and Happiness would be positively correlated. The correlation turned out to be -0.43 which was not what I predicted however the p-value of 0.18 suggests that we cannot assume that the correlation coefficient is not 0, indicating their may be no relationship between Happiness and TimeReading.
+
+# iv.
+## 1.
+```{r echo=FALSE}
+cor(student.survey)
+```
+## 2.
+```{r echo=FALSE}
+cor(student.survey$TimeReading, student.survey$Happiness)
+```
+
+## 3.
+```{r echo=FALSE}
+cor.test(student.survey$TimeReading, student.survey$Happiness, conf.level = .99)
+```
+
+## 4.
+
+* TimeReading vs TimeTV
+  + A value of -0.88 suggests a very strong correlation between time spent reading and time spent watching TV
+  + The negative suggests that as time spent reading increases, time spent watching TV decreases
+* TimeReading vs Happiness
+  + A value of -0.43 suggests a medium correclation between time spent reading and level of happiness
+  + The negative suggests that as time spent reading increases, happiness decreases
+* TimeReading vs Gender
+  + A value of -0.09 suggests there is little to no correlation between gender and time spent reading
+* TimeTV vs Happieness
+  + A value of 0.63 suggests a strong correlation between time spent watching TV and happiness
+  + The positive value suggests that as time spent watching TV increases, happiness also increases.
+* TimeTV vs Gender
+  + A value of 0.01 suggests there is no correlation between gender and time spent watching TV
+* Happiness vs Gender
+  + A value of 0.16 suggests that there may be a slight correlation between gender and level of happiness
+  + A positive or negative value here has no meaning as gender is not a scale, just a binary (in this data) value
+  
+# v.
+```{r echo=FALSE}
+cor(student.survey)
+cor(student.survey)^2
+```
+
+The correlation coefficients shows how strongly correlated the various variables are, while the coefficient of determination shows how much of the variance in each variable can be attributed to the other variables.
+
+For example time spent reading and time spent watching TV have a very strong correlation (-.88).  The coefficient of determination (0.78) suggests that 78% of the variation in TimeTV and TimeReading is could be caused by the other variable.  This still does not confirm that these variables are the cause of the variance in the other.
+
+# vi.
+While it can be said that time spent watching TV and time spent reading are strongly correlated it cannot be said if this is causation. Determining whether watching TV decreases time spent reading or if it is the other way around can not be determined given the data that we have.  Additionally it could be a third variable that is causing each of these variables to move and is the actual cause.
+
+# vii.
+```{r echo=FALSE}
+library(ggm)
+pc <- pcor(c("TimeReading", "TimeTV", "Happiness"), var(student.survey))
+pc
+pc^2
+```
+Looking at the correlation between TimeReading and TimeTV while holding Happiness constant does not change the correlation coefficient or the coefficient of determination by a significant amount.  This suggests that happiness is not having a strong effect on the relationship between TimeReading and TimeTV.

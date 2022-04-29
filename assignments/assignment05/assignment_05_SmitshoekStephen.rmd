@@ -1,0 +1,23 @@
+---
+title: "assignment_05_SmitshoekStephen"
+author: "Stephen Smitshoek"
+date: "29/04/2022"
+output: pdf_document
+---
+
+```{r include=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+heights_df <- read.csv("data/r4ds/heights.csv")
+```
+
+```{r echo=FALSE}
+cor(heights_df$height, heights_df$earn)
+with(heights_df, cor(age, earn))
+cor(heights_df$ed, heights_df$earn)
+```
+
+```{r echo=FALSE}
+tech_spending <- c(18079, 18594, 19753, 20734, 20831, 23029, 23597, 23584, 25525, 27731, 29449)
+suicides <- c(5427, 5688, 6198, 6462, 6635, 7336, 7248, 7491, 8161, 8578, 9000)
+cor(tech_spending, suicides)
+```
