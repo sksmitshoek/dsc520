@@ -1,0 +1,126 @@
+---
+title: "assignment_06"
+author: "Stephen Smitshoek"
+date: "05/05/2022"
+output: pdf_document
+---
+
+```{r echo=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+heights_df <- read.csv("data\\r4ds\\heights.csv")
+library(ggplot2)
+```
+
+```{r echo=FALSE}
+age_lm <-  lm(earn ~ age, data=heights_df)
+summary(age_lm)
+```
+```{r echo=FALSE}
+age_predict_df <- data.frame(earn = predict(age_lm, heights_df[,"age",drop=FALSE]), age=heights_df$age)
+
+ggplot(data = age_lm, aes(y = earn, x = age)) +
+  geom_point(color='blue') +
+  geom_line(color='red',data = age_predict_df, aes(y=earn, x=age))
+```
+
+Mean Earn:
+```{r echo=FALSE}
+mean_earn <- mean(heights_df$earn)
+mean_earn
+```
+
+Corrected Sum of Squares Total:
+```{r echo=FALSE}
+sst <- sum((mean_earn - heights_df$earn)^2)
+sst
+```
+
+Corrected Sum of Squares for Model:
+```{r echo=FALSE}
+ssm <- sum((mean_earn - age_predict_df$earn)^2)
+ssm
+```
+
+Residuals:
+```{r echo=FALSE}
+residuals <- heights_df$earn - age_predict_df$earn
+residuals
+```
+
+Sum of Squares for Error:
+```{r echo=FALSE}
+sse <- sum(residuals^2)
+sse
+```
+
+R Squared R^2:
+```{r echo=FALSE}
+r_squared <- ssm/sst
+r_squared
+```
+
+Number of observations:
+```{r echo=FALSE}
+n <- length(heights_df$age)
+n
+```
+
+Number of regression parameters:
+```{r echo=FALSE}
+p <- 2
+p
+```
+
+Corrected Degrees of Freedom for Model:
+```{r echo=FALSE}
+dfm <- p - 1
+dfm
+```
+
+Degrees of Freedom for Error:
+```{r echo=FALSE}
+dfe <- n - p
+dfe
+```
+
+Corrected Degrees of Freedom Total:
+```{r echo=FALSE}
+dft <- n - 1
+dft
+```
+
+Mean of Squares for Model:
+```{r echo=FALSE}
+msm <- ssm / dfm
+msm
+```
+
+Mean of Squares for Error:
+```{r echo=FALSE}
+mse <- sse / dfe
+mse
+```
+
+Mean of Squares Total:
+```{r echo=FALSE}
+mst <- sst / dft
+mst
+```
+
+F Statistic:
+```{r echo=FALSE}
+f_score <- msm / mse
+f_score
+```
+
+Adjusted R Squared R2:
+```{r echo=FALSE}
+adjusted_r_squared <- 1 - (1 - r_squared) * (n - 1) / (n - p)
+adjusted_r_squared
+```
+
+p-value:
+```{r echo=FALSE}
+p_value <- pf(f_score, dfm, dft, lower.tail=F)
+p_value
+```

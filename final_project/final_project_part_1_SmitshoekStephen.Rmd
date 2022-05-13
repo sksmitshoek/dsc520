@@ -1,0 +1,82 @@
+---
+title: "Climate_Change"
+author: "Stephen Smitshoek"
+date: "10/05/2022"
+output: pdf_document
+---
+
+# Introduction
+
+Climate change is an issue that is impacting our world and is directly caused my humans.  Some issues created by climate change are, more common extreme weather events, polar ice caps melting, rising sea levels and a rise in the global average temperatures.  If climate change is not stopped in the near future Earth could be permanently impacted and may become uninabitable.  
+
+There are a number of people that do not belive in climate change, using data science it should be possible to prove that climate change is a fact and show the impacts that it is having on our world.
+
+# Research Questions
+
+1. Is there a direct correlation between CO2 emissions and global temperature?
+2. Are atmospheric CO2 levels a better predictor of global temperatures?
+3. Are CO2 emissions directly correlated with atmospheric CO2 levels
+4. Does in increase in global temperatures lead to rising sea levels?
+5. On our current trajectory, how long do we have before climate change is irreversible?
+6. Is the rise in temperature global or is it isolated to a specific region?
+
+
+# Approach
+
+Regional and global temperatures will be plotted to observe if there is a rise in temperature over time. Using linear models, it will be seen how closely CO2 emissions are related to rise in global temperatures.  CO2 emissions will also be checked against atmospheric CO2 levels to check if emissions are the main cause of a rise in CO2 levels.  
+
+## How your approach addresses the problem
+  
+  By confirming that there is an increase in average global temperature over time and that it is not isolated to one region it will be possible to conclude that climate change is indisputably real. Then by seeing if there is a fitting a linear model between CO2 emissions and the rise in temperature it should infer that humans are responsible for this change.  Using this linear model and some reasearch it should then be possible to infer when we will get to a point that climate change is irreversable.
+
+# Data
+  
+* co2_atmo.csv
+  * co2_atmo.csv contains atmospheric CO2 levels which were collected from the Mauna Loa Observatory in Hawaii
+  * The original purpose of this data was to monitor the level of CO2 in the atmosphere and monitor how it changes over time.
+  * https://www.kaggle.com/datasets/ucsandiego/carbon-dioxide
+
+* co2_emission.csv
+  * co2_emission.csv contains the annual CO2 equivalent emissions in tonnes for different countries per year
+  * The original data was obtained from OurWorldInData.com and was collected to monitor the reported green house gas (GHG) emissions of each country over time
+  * https://www.kaggle.com/datasets/yoannboyere/co2-ghg-emissionsdata
+
+* sea_levels_2015.csv
+  * sea_levels_2015.csv containes the average global sea level relative to the 1983 average.
+  * Global mean sea level (GMSL) is measured in mm relative to the 1983 average
+  * https://www.kaggle.com/datasets/somesh24/sea-level-change
+
+* GlobalTemperatures.csv
+  * GlobalTemperatres.csv contains global average temperature each month from 1750 - 2015.
+  * The maximum, and minimum land temperature and averaged land and ocean temperature are also recorded but will not be used for this project.
+  * This data was originally collected by the Berkeley Earth Surface Temperature Study to monitor how global temperatures are changing over time
+  * https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data
+  
+* GlobalLandTemperaturesByCountry.csv
+  * GlobalLandTemperaturesByCountry.csv contains average temperature each month from 1750 - 2015 broken down by country.
+  * This data was originally collected by the Berkeley Earth Surface Temperature Study to monitor how global temperatures are changing over time
+  * https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data
+
+# Required Packages
+
+* ggplot2
+* readxl
+* lm.beta
+* car
+
+# Plots and Table Needs
+
+* Plots
+  * CO2 emissions vs time
+  * Global temperature vs time
+  * Sea level vs time
+  * Global temperature vs CO2 emissions
+  * Global temperature vs sea level
+  * Temperature differentials of different countries
+    * The difference from an early decade of data and the most recent decade of data broken down by country
+    
+
+# Questions for future steps
+
+* At what CO2 level does climate change become irreversible.
+* How have temperature and CO2 levels varied in geological history

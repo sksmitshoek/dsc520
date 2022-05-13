@@ -1,0 +1,5 @@
+https://www.kaggle.com/datasets/berkeleyearth/climate-change-earth-surface-temperature-data
+
+https://www.kaggle.com/datasets/yoannboyere/co2-ghg-emissionsdata
+
+https://www.kaggle.com/datasets/somesh24/sea-level-change

@@ -1,0 +1,120 @@
+---
+title: "assignment_07"
+author: "Stephen Smitshoek"
+date: "05/05/2022"
+output: pdf_document
+---
+
+```{r echo=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+heights_df <- read.csv("data/r4ds/heights.csv")
+```
+
+```{r echo=FALSE}
+earn_lm <-  lm(earn ~ height + sex + ed + age + race, data=heights_df)
+summary(earn_lm)
+```
+
+```{r echo=FALSE}
+predicted_df <- data.frame(
+  earn = predict(earn_lm, heights_df),
+  ed=heights_df$ed, race=heights_df$race, height=heights_df$height,
+  age=heights_df$age, sex=heights_df$sex
+  )
+```
+
+Mean Earn:
+```{r echo=FALSE}
+mean_earn <- mean(heights_df$earn)
+mean_earn
+```
+
+Corrected Sum of Squares Total:
+```{r echo=FALSE}
+sst <- sum((mean_earn - heights_df$earn)^2)
+sst
+```
+
+Corrected Sum of Squares for Model:
+```{r echo=FALSE}
+ssm <- sum((mean_earn - predicted_df$earn)^2)
+ssm
+```
+
+Residuals:
+```{r echo=FALSE}
+residuals <- heights_df$earn - predicted_df$earn
+residuals
+```
+
+Sum of Squares for Error:
+```{r echo=FALSE}
+sse <- sum(residuals^2)
+sse
+```
+
+R Squared:
+```{r echo=FALSE}
+r_squared <- ssm/sst
+r_squared
+```
+
+Number of observations:
+```{r echo=FALSE}
+n <- NROW(heights_df)
+n
+```
+
+Number of regression parameters:
+```{r echo=FALSE}
+p <- 8
+p
+```
+
+Corrected Degrees of Freedom for Model:
+```{r echo=FALSE}
+dfm <- p - 1
+dfm
+```
+
+Degrees of Freedom for Error:
+```{r echo=FALSE}
+dfe <- n - p
+dfe
+```
+
+Corrected Degrees of Freedom Total:
+```{r echo=FALSE}
+dft <- n - 1
+dft
+```
+
+Mean of Squares for Model:
+```{r echo=FALSE}
+msm <- ssm / dfm
+msm
+```
+
+Mean of Squares for Error:
+```{r echo=FALSE}
+mse <- sse / dfe
+mse
+```
+
+Mean of Squares Total:
+```{r echo=FALSE}
+mst <- sst / dft
+mst
+```
+
+F Statistic
+```{r echo=FALSE}
+f_score <- msm / mse
+f_score
+```
+
+Adjusted R Squared:
+```{r echo=FALSE}
+adjusted_r_squared <- 1 - (1 - r_squared) * (n - 1) / (n - p)
+adjusted_r_squared
+```

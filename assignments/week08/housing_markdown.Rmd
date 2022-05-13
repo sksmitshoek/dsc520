@@ -1,0 +1,167 @@
+---
+title: "housing_data"
+author: "Stephen Smitshoek"
+date: "06/05/2022"
+output: pdf_document
+---
+
+```{r echo=FALSE}
+library(readxl)
+library(ggplot2)
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+housing_data <- read_xlsx("data\\week-7-housing.xlsx")
+colnames(housing_data)[1:2] <- c("sale_date", "sale_price")
+```
+
+## Data Transformations
+
+```{r echo=FALSE}
+housing_data$sale_year <- as.numeric(format(housing_data$sale_date, format = "%Y"))
+housing_data$sale_date <- as.Date(housing_data$sale_date)
+housing_data$bath_total <- with(housing_data, 
+                                bath_full_count + 
+                                  bath_half_count * .5 + 
+                                  bath_3qtr_count * .75)
+```
+
+* Renamed 'sale date' and 'sale price' so they didnt include spaces
+* Extracted the sale year from the sale date as the month and day are likley not relevant
+* Calculated the total number of bathrooms in the house and stored it in a seperate variable
+
+# Linear Models
+
+```{r echo=FALSE}
+sale_price_lm1 <- lm(sale_price ~ sq_ft_lot, 
+                     data=housing_data)
+
+sale_price_lm2 <- lm(sale_price ~ sq_ft_lot + year_built + sale_year + 
+                       bath_total + bedrooms, 
+                     data=housing_data)
+
+summary(sale_price_lm1)
+summary(sale_price_lm2)
+```
+
+In the multi variable model, year_built, bath_total, and bedrooms were all included in addition to sq_ft_lot as they are usually factors people are interesed in when buying a year.  Sale year was also included as prices generally increase over time due to inflation.
+
+## Sale Price vs. Square Foot Lot
+
+* R^2 = 0.01435
+* Adjusted R2 = 0.01428
+These R2 values suggest that the square footage of a lot accounts for approximately 1.4% of the variation in sales price.
+
+## Sale Price vs. Square Foot Lot + Year Built + Sale Year + Bathrooms + Bedrooms
+
+* R^2 = 0.1597
+* Adjusted R2 = 0.1593
+
+These R2 values suggest that the predictors used account for approximately 16% of the variation in sales price.  This is a substantial increase over the 1.4% predicted by just the square footage and indicates that this model is a better fit for predicting the sale price of a home.
+
+## Beta Values
+```{r echo=FALSE}
+library(lm.beta)
+lm.beta(sale_price_lm2)
+```
+* sq_ft_lot = 0.12
+* year_built = 0.17
+* sale_year = 0.04
+* bath_total = 0.23
+* bedrooms = 0.10
+
+These standardized beta values represent the impact that a one standard deviation change in the respective variable will have on the sale price.  For example an increase of one standard deviation in square footage will increase sale price by 0.11 standard deviations.  If everything else is held constant.
+
+The standardized beta values also show the relative importance of each variable.  Square footage and number of bedrooms can be said to have a similar impact, where number of bathrooms has a siginifcantly larger impact on the sale price.
+
+## Confidence Intervals
+```{r echo=FALSE}
+confint(sale_price_lm2, level=.95)
+```
+
+These confidence intervals show the range of where the possible beta values may lay with a 95% confidence level.  The smaller the range the more likely our models beta value is representative of the greater population.  The fact that none of the confidence intervals cross zero indicates that each factor listed is significant. 
+
+## Analysis of Variance
+```{r echo=FALSE}
+anova(sale_price_lm1, sale_price_lm2)
+```
+
+The additional variable made a significant increase in the models accuracy since there is an F ratio of 556 with a P < 0.001.
+
+## Outliers
+```{r echo=FALSE}
+housing_data$residuals <- resid(sale_price_lm2)
+```
+
+## Standardized Residuals
+```{r echo=FALSE}
+housing_data$std.resid <- rstandard(sale_price_lm2) > 2 | rstandard(sale_price_lm2) < -2
+```
+
+## Number of Large Residuals
+```{r echo=FALSE}
+sum(housing_data$std.resid)
+```
+
+## Variables with Large Residuals
+```{r echo=FALSE}
+housing_data[housing_data$std.resid,]
+```
+
+## Leverage, Cooks Distance, and Covariance Ratios
+```{r echo=FALSE}
+housing_data$leverage <- hatvalues(sale_price_lm2)
+housing_data$cooks <- cooks.distance(sale_price_lm2)
+housing_data$cov.ratio <- covratio(sale_price_lm2)
+```
+
+```{r echo=FALSE}
+avg.lvg <- (5 + 1) / 12865
+cvr.pos <- 1 + (3 * (5+1) / 12865) 
+cvr.neg <- 1 - (3 * (5+1) / 12865)
+```
+
+```{r echo=FALSE}
+subset(housing_data, std.resid & (cooks > 1 | leverage > avg.lvg * 3 | cov.ratio > cvr.pos | cov.ratio < cvr.neg))[,c("sale_date", "std.resid", "cooks", "leverage", "cov.ratio")]
+
+housing_data[housing_data$sale_date == "2006-03-28",]
+
+```
+There are 298 rows which could be classified as outliers however all except one have a cooks distance < 1 so they are likely not influencing the model.  The one row which is providing influence and is an outlier is a home sold on appears to have sold for $270,000 but has 23 bathrooms and has a lot size of 89734 square feet.
+
+## Assumption of Independence
+```{r echo=FALSE}
+library(car)
+durbinWatsonTest(sale_price_lm2)
+```
+
+Because the D-W Statistic is less than 1 and the p value is less than 0.05 it can be assumed that there is autocorrelation in the variables in the model.
+
+## Assumption of No Multicollinearity
+```{r echo=FALSE}
+vif(sale_price_lm2)
+mean(vif(sale_price_lm2))
+1/vif(sale_price_lm2)
+```
+
+The largest VIF is not greater than 10 and the average VIF is not substantially greater than 1.  Additionally none of the tolerances are less than 0.2.  With all of this information it can be concluded there is no multicollinearity between the variables used in the model. 
+
+##
+```{r echo=FALSE}
+plot(sale_price_lm2)
+hist(rstudent(sale_price_lm2))
+```
+
+* Residuals vs Fitted
+
+  * For the most part the show a normal distribution, it is possible there is some heteroscedasticity as there are a number of residuals over 3E6 but only for fitted values between 500,000 and 1,000,000.
+  
+* Normal Q-Q
+
+  * This plot suggests we have leptokurtic kurtosis and so the data is not normally distributed
+
+* Histogram Studentized Residuals
+
+  * The histogram of the studentized residuals shows a very strong leptokurtic kurtosis and agrees with the Q-Q plot that the data is not normally distributed.
+
+## Regression Model Summary
+
+* The multiple regrassion model that was generated does not appear to be unbias.  There was an outlyer that had a strong influence on the model and the resulting data had a very strong leptokurtic kurtosis.  The sample data as it exists does not appear to be a good representation of the general population.
