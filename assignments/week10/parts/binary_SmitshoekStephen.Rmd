@@ -1,0 +1,44 @@
+---
+title: "binary"
+author: "Stephen Smitshoek"
+date: "19/05/2022"
+output: pdf_document
+---
+
+```{r libraries, echo=FALSE}
+library(caTools)
+```
+
+```{r setup, echo=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+
+binary_data <- read.csv('data\\binary-classifier-data.csv')
+binary_data$label <- as.factor(binary_data$label)
+```
+
+```{r splits, echo=FALSE}
+binary_data_split <- sample.split(binary_data, SplitRatio = 0.7)
+
+training_data <- subset(binary_data, binary_data_split==TRUE)
+testing_data <- subset(binary_data, binary_data_split==FALSE)
+```
+
+```{r GLM, echo=FALSE}
+binary_glm <- glm(label ~ x + y, data=binary_data, family=binomial())
+summary(binary_glm)
+```
+
+# Confidence Matrix
+```{r confmatrix, echo=FALSE}
+response <- predict(binary_glm, newdata=binary_data, type="response")
+
+confmatrix <- table(Actual_Value=binary_data$label, 
+                    Predicted_Value = response > 0.5)
+confmatrix
+```
+
+# Accuracy
+```{r accuracy, echo=FALSE}
+accuracy <- (confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+accuracy
+```

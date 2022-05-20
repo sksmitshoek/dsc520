@@ -1,0 +1,47 @@
+---
+title: "Surgery"
+author: "Stephen Smitshoek"
+date: "19/05/2022"
+output: pdf_document
+---
+
+```{r libraries, echo=FALSE}
+library(foreign)
+library(caTools)
+```
+
+```{r setup, echo=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+surgery_data <- read.arff('data\\ThoraricSurgery.arff')
+```
+
+```{r data spit, echo=FALSE}
+surgery_data_split <- sample.split(surgery_data, SplitRatio = 0.7)
+
+surgery_training <- subset(surgery_data, surgery_data_split==TRUE)
+surgery_testing <- subset(surgery_data, surgery_data_split==FALSE)
+```
+
+#Generalized Linear Model
+```{r GLM, echo=FALSE}
+surgery_glm <- glm(Risk1Yr ~ DGN + PRE4 + PRE5 + PRE7 + PRE8 + PRE9 + PRE10 + 
+                  PRE11 + PRE14 + PRE17 + PRE19 + PRE25 + PRE30 + PRE32 + AGE, 
+                  data=surgery_training, family=binomial())
+summary(surgery_glm)
+```
+
+The factors that are the most significant in the model are PRE4, PRE9, PRE14 and PRE17.  These are the only factors with a P value less than 0.05
+
+# Confidence Matrix
+```{r confmatrix, echo=FALSE}
+response <- predict(surgery_glm, surgery_testing, type="response")
+
+confmatrix <- table(Actual_Value=surgery_testing$Risk1Yr, 
+                    Predicted_Value = response > 0.5)
+confmatrix
+```
+
+# Accuracy
+```{r accuracy, echo=FALSE}
+(confmatrix[[1,1]] + confmatrix[[2,2]]) / sum(confmatrix)
+```
