@@ -1,0 +1,38 @@
+---
+title: "Clustering"
+author: "Stephen Smitshoek"
+date: "03/06/2022"
+output: pdf_document
+---
+
+```{r libraries, echo=FALSE, warning=FALSE}
+library(ggplot2)
+library(class)
+library(caTools)
+library(factoextra)
+```
+
+```{r setup, echo=FALSE}
+setwd("C:\\Users\\sksmi\\PeytoAccess\\Personal\\Bellevue\\DSC520\\dsc520")
+clustering_data <- read.csv("data\\clustering-data.csv")
+```
+
+# Clustered Data
+
+```{r clustering, echo=FALSE, fig.height=4, fig.width=4, fig.align='center'}
+wss <- data.frame()
+for (k in 1:12) {
+  km_cluster <- kmeans(clustering_data, k)
+  print(fviz_cluster(km_cluster, data=clustering_data))
+  wss <- rbind(wss, c(k, km_cluster$tot.withinss))
+}
+colnames(wss) <- c("k", "wss")
+```
+
+# Number of Clusters
+
+```{r number_of_clusters, echo=FALSE, fig.height=5, fig.width=5}
+ggplot(data=wss, aes(x=k, y=wss)) + geom_point() + geom_line()
+```
+
+The 'elbow' in the above graph occurs when k is two and so that is number of cluster that should be used for this data.
